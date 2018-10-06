@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+pkill admiral &>/dev/null
+pkill lemonbar &>/dev/null
+
+BACKG_C="#77004bcb"
+FOREG_C="#EEEEEE"
+
+$HOME/.local/bin/admiral | lemonbar -u 2 -p -B "$BACKG_C" -F "$FOREG_C" -U "$UNDER_C" -f "FontAwesome" -f "Inconsolata" -f "Consolas" -g 1920x24+0+0 | sh

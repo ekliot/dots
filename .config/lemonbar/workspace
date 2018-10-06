@@ -1,0 +1,59 @@
+#!/usr/bin/python3
+# author: Elijah Kliot
+# based on https://github.com/fullsalvo/dotfiles/blob/master/base/.config/lemonbar/workspace
+
+import i3ipc
+
+# Create the Connection object that can be used to send commands and subscribe
+# to events.
+i3 = i3ipc.Connection()
+
+ws_active = '\uf111' # filled circle
+ws_urgent = '\uf192' # circle w/ dot
+ws_absent = '\uf10c' # empty circle
+
+coloractive = '%{F#eeeeee}'
+colorinactive = '%{F#4b4b4b}'
+colorwarning = '%{F#e84f4f}'
+
+# Define a callback to be called when you switch workspaces.
+def on_workspace_focus(self, e):
+    workspace_string = '  '
+    workspaces = i3.get_workspaces()
+
+    for n in range(len(workspaces)):
+        ws = workspaces[n]
+        if ws['focused']:
+            workspace_string += coloractive + ws_active + '  '
+        elif ws['urgent']:
+            workspace_string += colorwarning + ws_urgent + '  '
+        else:
+            workspace_string += colorinactive + ws_absent + '  '
+
+    workspace_string += '%{F-}'
+
+    print(workspace_string, flush=True)
+
+# end on_workspace_focus
+
+# initial building of the sting
+
+workspace_string = '  '
+workspaces = i3.get_workspaces()
+
+for n in range(len(workspaces)):
+    ws = workspaces[n]
+    if ws['focused']:
+        workspace_string += coloractive + ws_active + '  '
+    elif ws['urgent']:
+        workspace_string += colorwarning + ws_urgent + '  '
+    else:
+        workspace_string += colorinactive + ws_absent + '  '
+
+print(workspace_string, flush=True)
+
+# Subscribe to events
+i3.on('workspace', on_workspace_focus)
+
+# Start the main loop and wait for events to come in.
+i3.main()

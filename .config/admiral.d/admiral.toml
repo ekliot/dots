@@ -1,0 +1,86 @@
+[admiral]
+items = ["left", "space", "greet", "space",
+             "modes",
+         "center",
+             "workspaces",
+             "test",
+         "right",
+             "pacman", "separator",
+             "volup", "voldn", "mute", "volume", "noclick", "noclick", "noclick", "separator",
+             "battery", "separator",
+             "clock",
+             "space"]
+
+# = = = = = = = #
+# Info Regions  #
+# = = = = = = = #
+
+[workspaces]
+path = "~/.config/lemonbar/workspace"
+
+[modes]
+path = "~/.config/lemonbar/modes"
+
+[clock]
+path = "date '+%b %d, %Y // %H:%M'"
+reload = 1
+
+[greet]
+path = "echo 'ekliot@acheron'"
+static = true
+
+[battery]
+path = "~/.config/lemonbar/battery"
+reload = 5
+
+[pacman]
+path = "~/.config/lemonbar/pacman"
+reload = 60
+
+[volume]
+path = "~/.config/lemonbar/volume"
+reload = 0.1
+
+# = = = = = = = = = #
+# Clickable Regions #
+# = = = = = = = = = #
+
+[volup]
+path = "echo '%{A4:~/.config/lemonbar/volup:}'"
+static = true
+
+[voldn]
+path = "echo '%{A5:~/.config/lemonbar/voldn:}'"
+static = true
+
+[mute]
+path = "echo '%{A3:~/.config/lemonbar/mute:}'"
+static = true
+
+[noclick]
+path = "echo '%{A}'"
+static = true
+
+# = = = = = = = = = = = = = = = #
+# Used for formatting lemonbar  #
+# = = = = = = = = = = = = = = = #
+
+[separator]
+path = "echo -e '  //  '"
+static = true
+
+[space]
+path = "echo '  '"
+static = true
+
+[left]
+path = "echo '%{l}'"
+static = true
+
+[center]
+path = "echo '%{c}'"
+static = true
+
+[right]
+path = "echo '%{r}'"
+static = true

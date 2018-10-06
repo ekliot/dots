@@ -1,0 +1,67 @@
+#!/bin/bash
+
+ID=/usr/bin/id
+ECHO=/bin/echo
+RM=/bin/rm
+MV=/bin/mv
+CP=/bin/cp
+MKDIR=/usr/bin/mkdir
+RSYNC=/usr/bin/rsync
+HOSTNAME=/usr/bin/hostname
+
+if [[ $($ID -u) != 0 ]]
+then
+	$ECHO "root pls ~ now will exit"
+	exit
+fi
+
+if [[ "$1" == "" ]]
+then
+	$ECHO "snapshot dest pls ~ like 'snapshot /mnt/usb1' ~ now will exit"
+	exit
+fi
+
+DEST="$1/backup/$($HOSTNAME)/snapshots"
+$ECHO "backing up snapshots to $DEST"
+
+SNAP3=$DEST/backup.3
+SNAP2=$DEST/backup.2
+SNAP1=$DEST/backup.1
+SNAP0=$DEST/backup.0
+
+if [[ -d $SNAP3 ]]
+then
+	$ECHO "  ~ removing $SNAP3"
+	$RM -rf $SNAP3
+fi
+
+if [[ -d $SNAP2 ]]
+then
+	$ECHO "  ~ renaming $SNAP2 as $SNAP3"
+	$MV $SNAP2 $SNAP3
+fi
+
+if [[ -d $SNAP1 ]]
+then
+	$ECHO "  ~ renaming $SNAP1 as $SNAP2"
+	$MV $SNAP1 $SNAP2
+fi
+
+if [[ -d $SNAP0 ]]
+then
+	$ECHO "  ~ renaming $SNAP0 as $SNAP1"
+	# $MV $SNAP0 $SNAP1 # this is not needed ?
+        $CP -al $SNAP0 $SNAP1
+else
+	$ECHO "  ~ making $SNAP0 dir"
+	$MKDIR -p "$SNAP0"
+fi
+
+OPTIONS="-aAX"
+INFO="--info=progress0,del,backup,copy,flist,misc,stats3"
+DELETE="--delete"
+
+$ECHO "backing up / as $SNAP0"
+
+$RSYNC $OPTIONS $INFO $DELETE --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found","/home/*/.thumbnails/","/home/*/.cache/mozilla/","/home/*/.cache/chromium/","/home/*/.local/share/Trash/*","/home/*/games/steam/*","/home/*/shots/*","/home/*/builds/*","/home/*/tmp/*","/home/*/media/*","/home/*/games/*"} / $SNAP0
+

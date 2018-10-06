@@ -1,0 +1,17 @@
+#!/usr/bin/python3
+
+import i3ipc
+
+i3 = i3ipc.Connection()
+color = '%{F#dd5500}'
+
+def on_mode(self, e):
+    if e.change != 'default':
+        modestr = color + '[' + e.change + ']' + '%{F-}'
+    else:
+        modestr = ''
+    print(modestr, flush=True)
+
+i3.on('mode', on_mode)
+
+i3.main()

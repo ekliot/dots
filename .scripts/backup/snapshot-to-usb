@@ -1,0 +1,56 @@
+#!/bin/bash
+
+script=/home/ekliot/.scripts/backup/rsync-snapshot
+id=/usr/bin/id
+
+mnt_dir=/mnt/usb1
+label=snapshot_drive
+
+log_dir=/home/ekliot/.log/rsync
+filename="$( date '+%Y-%m-%d_%H%M%S' )_rsync-snapshot"
+
+stdout_file=$log_dir/$filename.log
+stderr_file=$log_dir/$filename-err.log
+
+if [ $($id -u) != 0 ]; then
+    echo "pls root ~ exit now"
+    exit
+fi
+
+if [ ! -d $mnt_dir ]; then
+    echo "$mnt_dir does not exist, creating now"
+    mkdir $mnt_dir
+else
+    if mount | grep $mnt_dir > /dev/null; then
+        echo "/mnt/usb1 found, is mounted, unmounting now..."
+        umount $mnt_dir
+    else
+        echo "found unmounted $mnt_dir"
+    fi
+fi
+
+if ! find /dev/disk/by-label/$label > /dev/null 2>&1; then
+    echo "designated snapshot drive (label := $label) not located, exiting now..."
+    exit
+fi
+
+mount LABEL=$label $mnt_dir
+
+echo "now running rsync script"
+
+touch $stdout_file
+touch $stderr_file
+
+$script $mnt_dir > $stdout_file 2> $stderr_file
+
+umount $mnt_dir
+
+err_lines=$( cat $stderr_file | wc -m )
+
+if [ $err_lines != 0 ]; then
+    echo "rsync reported errors, check log file: $stderr_file"
+else
+    rm $stderr_file
+fi
+
+echo "rsync backup finished"

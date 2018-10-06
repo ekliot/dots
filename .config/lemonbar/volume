@@ -1,0 +1,63 @@
+#!/bin/bash
+
+volume () {
+    outstr=""
+
+    volout="$(amixer -D pulse sget Master | awk -F"[][]" 'END{ print $2 }')"
+    # cut off the last char (the % sign)
+    volout=${volout::$(( ${#volout} - 1 ))}
+
+    # either "on" or "off"
+    mute="$(amixer -D pulse sget Master | awk -F"[][]" 'END{ print $4 }')"
+
+    open="["
+    inactive=""
+    active=""
+    close="]"
+
+    block_full="\u25A0" # full block
+    block_empty="\u25A1" # empty block
+    block_dither="\u25A8" # hatched block
+
+    if [[ $mute == "off" ]]
+    then
+        # for some reason, lemonbar isn't rendering this unicode character
+        # active=$block_dither
+
+        active=$block_full
+        inactive=$block_empty
+
+        # TODO alternatives to "mute" :
+        #   color-coding
+        close="$close mute"
+    else
+        active=$block_full
+        inactive=$block_empty
+
+        # TODO buffer volout with spaces depending on value
+        # e.g. "  0"
+        #      " 50"
+        #      "100"
+
+        close="$close $volout%"
+    fi
+
+    blocks=$(( $volout / 10 ))
+    outstr=$open
+
+    for i in {1..10}
+    do
+        if [[ $i -le $blocks ]]
+        then
+            outstr="$outstr$active"
+        else
+            outstr="$outstr$inactive"
+        fi
+    done
+
+    outstr="$outstr$close"
+
+    echo -e $outstr
+}
+
+volume

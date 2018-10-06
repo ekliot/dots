@@ -1,0 +1,54 @@
+#!/bin/bash
+
+function help_me() {
+  echo "Use: dupe-n-link SRC [DEST]"
+  echo "     SRC := the file or dir to dupe"
+  echo "     DEST := the file or dir to dupe to (optional, default current dir)"
+  echo "Moves SRC to DEST, and leaves a symbolic link from SRC to DEST"
+  exit
+}
+
+function dupe() {
+  src=$1
+
+  if [[ $2 ]]
+  then
+    dst=$2
+  else
+    dst="$(pwd)/"
+  fi
+
+  mv $src $dst -v
+}
+
+function link() {
+  src=$1
+  dst=$2
+  ln -rs $src $dst -v
+}
+
+if [[ $# == 0 ]] || [[ $# > 2 ]]
+then
+  help_me
+fi
+
+SRC=$1
+BASE="$(basename $1)"
+if [[ $2 ]]
+then
+  if [[ -d $2 ]]
+  then
+    DEST="$2/$BASE"
+  else
+    DEST=$2
+  fi
+else
+  DEST="$(pwd)/$BASE"
+fi
+
+echo "SRC:     $SRC"
+echo "DEST:    $DEST"
+
+dupe $SRC $DEST
+echo "linking '$(dirname $SRC/$BASE)' TO '$DEST'"
+link $DEST "$(dirname $SRC/$BASE)"

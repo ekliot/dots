@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# author: Elijah Kliot
+# based on https://github.com/fullsalvo/dotfiles/blob/master/base/.config/lemonbar/battery
+
+battery () {
+    battery="$(</sys/class/power_supply/BAT0/capacity)"
+    charging="$(</sys/class/power_supply/ADP0/online)"
+
+    # alternate symbols:
+    #   - Circles with pips?
+    #   - arrows indicating charging status?
+    #   - squares with +/-?
+    containers=""
+    heart=" \uf004"  # full heart
+    empty=" \uf08a"  # empty heart
+    zapper=" \uf21e" # pulsing heart (charging)
+
+    red="#FF0000"
+    orange="#dd5500"
+    green="#00FF00"
+    color="$orange"
+
+    [ $battery -le 20 ] && \
+        color=$red
+
+    #  0-10% => 0/5 containers filled
+    # 11-30% => 1/5
+    # 31-50% => 2/5
+    # 51-70% => 3/5
+    # 71-90% => 4/5
+    # 91-100% => 5/5
+    bat=$(( ($battery + 9) / 20 ))
+
+    # color as green, and use charging hearts if battery is charging
+    [ "$charging" == "1" ] && \
+        heart=$zapper && color=$green
+
+    for i in {1..5}
+    do
+        if [ $i -le $bat ]
+        then
+            containers="$containers$heart"
+        else
+            containers="$containers$empty"
+        fi
+    done
+
+    # %{F#XXXXXX} is the start of color formatting, %{F-} is the end
+    echo -e "%{F$color}$containers $battery%%{F-}"
+}
+
+battery

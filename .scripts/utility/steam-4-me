@@ -1,0 +1,12 @@
+#!/bin/bash
+
+log_dir=/home/ekliot/.log/steam
+filename="$( date '+%Y-%m-%d_%H%M%S' )_steam-native"
+
+stdout_file=$log_dir/$filename.log
+
+steam_cmd=/usr/bin/steam-native
+
+touch $stdout_file
+
+$steam_cmd &> $stdout_file
