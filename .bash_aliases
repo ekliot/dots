@@ -21,7 +21,7 @@ alias grep="grep --color"
 # ----- aliases that are actually full-blown commands -------------------------
 
 # list disk usage statistics for the current folder
-alias duls="du -sh -d1 | sort -hr"
+alias duls="du -h -d1 | sort -hr"
 
 # Easily download an MP3 from youtube on the command line
 which youtube-dl &> /dev/null && alias youtube-mp3="youtube-dl --extract-audio --audio-format mp3"
