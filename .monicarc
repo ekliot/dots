@@ -1,7 +1,0 @@
-#!/bin/sh
-#
-# ~/.monicarc
-#
-# called from /home/ekliot/.xinitrc
-
-xgamma -quiet -rgamma 0.90 -ggamma 0.85 -bgamma 0.70
