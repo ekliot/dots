@@ -41,6 +41,7 @@ vim.opt.cursorline = true
 vim.opt.startofline = false
 -- }}}
 -- === FOLDING {{{
+vim.opt.foldmethod = 'indent'
 vim.opt.foldcolumn = '1'      -- left margin
 vim.opt.foldnestmax = 10    -- max 10 depth
 vim.opt.foldenable = true   -- don't fold files by default on open

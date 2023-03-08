@@ -89,7 +89,7 @@ return require('packer').startup(function(use)
 		end
 	}
 
-	use('Yggdroot/indentLine')
-
 	use('tpope/vim-commentary')
+
+	use( "lukas-reineke/indent-blankline.nvim" )
 end)
