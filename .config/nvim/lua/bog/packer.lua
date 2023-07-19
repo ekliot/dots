@@ -24,14 +24,12 @@ return require('packer').startup(function(use)
 
 	use('tpope/vim-fugitive')
 
-	use {
-		'VonHeikemen/lsp-zero.nvim',
-		branch = 'v1.x',
+	use({
+		'williamboman/mason.nvim',
 		requires = {
 			-- LSP Support
 			{ 'neovim/nvim-lspconfig' },    -- Required
-			{ 'williamboman/mason.nvim' },  -- Optional
-			{ 'williamboman/mason-lspconfig.nvim' }, -- Optional
+			{ 'williamboman/mason-lspconfig.nvim' }, -- Required
 
 			-- Autocompletion
 			{ 'hrsh7th/nvim-cmp' }, -- Required
@@ -44,26 +42,37 @@ return require('packer').startup(function(use)
 			-- Snippets
 			{ 'L3MON4D3/LuaSnip' },    -- Required
 			{ 'rafamadriz/friendly-snippets' }, -- Optional
+
+			-- Formatting
+			{ 'mhartington/formatter.nvim' }
 		}
-	}
+	})
 
 	use('mfussenegger/nvim-dap')
 	-- TODO https://github.com/rcarriga/nvim-dap-ui
 
 	-- TODO https://github.com/simrat39/rust-tools.nvim
 
-	use('vimwiki/vimwiki')
+	-- === UTILITY
 
-	-- for some reason this only works here
-	vim.g.vimwiki_list = {
-		{
-			path = '~/grimoire/',
-			syntax = 'default',
-			ext = '.wiki'
-		}
+	use({
+		"kylechui/nvim-surround",
+		tag = "*", -- Use for stability; omit to use `main` branch for the latest features
+		config = function()
+			require("nvim-surround").setup({
+				-- Configuration here, or leave empty to use defaults
+			})
+		end
+	})
+
+	use('tpope/vim-commentary')
+
+	use('renerocksai/telekasten.nvim')
+
+	use {
+		'stevearc/oil.nvim',
+		config = function() require('oil').setup() end
 	}
-	vim.g.vimwiki_global_ext = 0
-	vim.g.vimwiki_folding = 'expr'
 
 	-- === AESTHETICS
 
@@ -88,8 +97,6 @@ return require('packer').startup(function(use)
 			}
 		end
 	}
-
-	use('tpope/vim-commentary')
 
 	use( "lukas-reineke/indent-blankline.nvim" )
 end)
