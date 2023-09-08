@@ -7,5 +7,3 @@ vim.keymap.set("n", " ", 'za') -- toggle fold
 vim.keymap.set("x", "<leader>p", "\"_dP")
 
 vim.keymap.set("n", "Q", "<nop>")
-
-vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
