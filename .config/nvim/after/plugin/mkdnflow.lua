@@ -1,13 +1,24 @@
 -- auto write markdown files when navigating away from the buffer
 vim.api.nvim_create_autocmd("FileType", {pattern = "markdown", command = "set awa"})
 
+journal_dir = 'journal/'
+
+function get_latest_journal(j_dir)
+	-- fd = io.popen('find '..j_dir..' -printf "%f\n" | egrep "[0-9]{4}-[0-1][0-9]-[0-3][0-9].md" | sort -r | head -n 1')
+	fd = io.popen('ls '..j_dir..' | egrep "[0-9]{4}-[0-1][0-9]-[0-3][0-9].md" | sort -r | head -n 1')
+	item = fd:read('a'):gsub("%s+", "")
+	return(item)
+end
 
 function journal_template()
+	last_journal = get_latest_journal(journal_dir)
 	-- double newlines don't work well here? let's just hope we trim trailing whitespace on write...
+	-- TODO would be neat to do a "quote of the day" kidna thing as a subtitle
 	template =  '# '..os.date('%a | %b %d, %Y')..'\n \n'..
-				'### To Do\n \n'..
+				'[['..journal_dir..last_journal..'|Last]] <<>> Next\n \n'..
+				'## To Do\n \n'..
 				'- [ ] \n \n'..
-				'### Thoughts\n \n'
+				'## Notes\n \n'
 	return(template)
 end
 
@@ -30,10 +41,10 @@ require('mkdnflow').setup({
 	perspective = {
 		priority = 'root',
 		fallback = 'current',
-		root_tell = 'index.md',
+		root_tell = '.git',
 		nvim_wd_heel = false,
 		update = false
-	},    
+	},
 	wrap = false,
 	bib = {
 		default_path = nil,
@@ -48,7 +59,7 @@ require('mkdnflow').setup({
 		implicit_extension = 'md',
 		transform_implicit = function(input)
 			if input == 'TODAY' then
-				return('journal/'..os.date('%Y-%m-%d'))
+				return(journal_dir..os.date('%Y-%m-%d'))
 			end
 			return input
 		end,
@@ -70,10 +81,10 @@ require('mkdnflow').setup({
 				titlee = function()
 					fname = vim.api.nvim_buf_get_name(0)
 
-					if fname:match('journal/') then
+					if fname:match(journal_dir) then
 						return(journal_template())
 					end
-	
+
 					-- http://lua-users.org/wiki/StringRecipes
 					fname = fname:match("^.+/(.+)$"):match("(.+)%..+$")
 					local function tchelper(first, rest)

@@ -39,7 +39,35 @@ require('mason-lspconfig').setup({
 	}
 })
 
+vim.o.completeopt = 'menu,menuone,noselect,preview'
+
+local cmp = require('cmp')
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+		end,
+	},
+	window = {
+		-- completion = cmp.config.window.bordered(),
+		-- documentation = cmp.config.window.bordered(),
+	},
+	mapping = cmp.mapping.preset.insert({
+		-- ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+		-- ['<C-f>'] = cmp.mapping.scroll_docs(4),
+		['<C-Space>'] = cmp.mapping.complete(),
+		['<CR>'] = cmp.mapping.confirm({ select = true }),
+	}),
+	sources = cmp.config.sources({
+		{ name = 'nvim_lsp' },
+		{ name = 'luasnip' }, -- For luasnip users.
+	}, {
+		{ name = 'buffer' },
+	})
+})
+
 local lspconfig = require('lspconfig')
+-- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
 local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
 
 require('mason-lspconfig').setup_handlers({
@@ -48,18 +76,24 @@ require('mason-lspconfig').setup_handlers({
 			capabilities = lsp_capabilities,
 		})
 	end,
-})
 
-lspconfig.pylsp.setup({
-	settings = {
-		pylsp = {
-			plugins = {
-				pycodestyle = {
-					enabled = false
+	['pylsp'] = function ()
+		lspconfig['pylsp'].setup({
+			capabilities = lsp_capabilities,
+			settings = {
+				pylsp = {
+					plugins = {
+						pycodestyle = {
+							enabled = false
+						},
+						-- ruff = {
+						-- 	enabled = true
+						-- }
+					}
 				}
 			}
-		}
-	}
+		})
+	end
 })
 
 -- custom stuff goes here

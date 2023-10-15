@@ -39,6 +39,11 @@ require("formatter").setup {
 			-- end
 		-- },
 
+		python = {
+			require("formatter.filetypes.python").isort,
+			require("formatter.filetypes.python").black,
+		},
+
 		-- Use the special "*" filetype for defining formatter configurations on
 		-- any filetype
 		["*"] = {
@@ -55,4 +60,3 @@ augroup FormatAutogroup
   autocmd BufWritePost * FormatWrite
 augroup END
 ]])
-
